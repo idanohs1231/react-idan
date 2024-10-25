@@ -4,10 +4,14 @@ import { TUser } from "../../Types/TUser";
 type TRouteGuardProps = {
   children: React.ReactNode;
   user: TUser;
+  adminOnly?: boolean; // Add a prop for admin-only routes
 };
 
-const RouteGuard = (props: TRouteGuardProps) => {
-  return props.user ? <>{props.children}</> : <Navigate to={"/"} />;
+const RouteGuard = ({ children, user, adminOnly = false }: TRouteGuardProps) => {
+  if (!user) return <Navigate to={"/"} />;
+  if (adminOnly && !user.isAdmin) return <Navigate to={"/"} />; // Redirect if not admin
+
+  return <>{children}</>;
 };
 
 export default RouteGuard;

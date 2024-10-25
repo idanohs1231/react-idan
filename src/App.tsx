@@ -3,8 +3,7 @@ import Home from "./Pages/Home/Home";
 import Header from "./Components/Layout/Header/Header";
 import Footer from "./Components/Layout/Footer/Footer";
 import SignIn from "./Pages/SignIn/SignIn";
-import './index.css';
-
+import "./index.css";
 import Profile from "./Pages/Profile/Profile";
 import RouteGuard from "./Components/Shared/RouteGuard";
 import { useSelector } from "react-redux";
@@ -13,22 +12,26 @@ import CardDetails from "./Pages/CardDetails/CardDetails";
 import CardEdit from "./Pages/CardEdit/CardEdit";
 import Favorites from "./Pages/Favorites/Favorites";
 import MyCards from "./Pages/My-Cards/My-Cards";
-import CreateCard from "./Pages/CreateCard/CreateCard"; 
+import CreateCard from "./Pages/CreateCard/CreateCard";
 import SignUp from "./Pages/SignUp/SignUp";
+import About from "./Pages/About/About"; // Import the new About page
+
 
 function App() {
   const user = useSelector((state: TRootState) => state.UserSlice.user);
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <div className="flex flex-col min-h-screen dark:bg-slate-800" style={{ paddingBottom: '40px' }}>
+
+      <div className="flex-grow dark:bg-slate-800">
         <Routes>
           <Route path="/*" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/about" element={<About />} />
+
           <Route path="/card/:id" element={<CardDetails />} />
-    
           <Route
             path="/profile"
             element={
@@ -49,15 +52,15 @@ function App() {
             path="/createcard"
             element={
               <RouteGuard user={user!}>
-                <CreateCard /> {/* Render the form here */}
+                <CreateCard />
               </RouteGuard>
             }
           />
-                  <Route
+          <Route
             path="/edit-card/:id"
             element={
               <RouteGuard user={user!}>
-                <CardEdit /> {/* Render the form here */}
+                <CardEdit />
               </RouteGuard>
             }
           />
@@ -69,13 +72,12 @@ function App() {
               </RouteGuard>
             }
           />
+
         </Routes>
       </div>
-      <div className="fixed bottom-0 w-full " style={{ marginTop: '20px' }}>
+
       <Footer />
     </div>
-
-    </>
   );
 }
 

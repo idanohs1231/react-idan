@@ -6,9 +6,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { SignUpJoiSchema } from "../../validations/SignUpSchema.joi";
 import { TUser } from "../../Types/TUser";
+import { useEffect } from "react";
+
 
 // Define a new type excluding _id and isAdmin
-type SignUpFormData = Omit<TUser, "_id" | "isAdmin" | "image" | "password"> & { 
+type SignUpFormData = Omit<TUser, "_id" | "isAdmin" | "password"> & {
   password: string;
 };
 
@@ -19,14 +21,15 @@ function SignUp() {
     name: { first: "", middle: "", last: "" },
     phone: "",
     email: "",
-    password: "", // Password field for sign-up
+    image: { url: "", alt: "" },
+    password: "",
     address: {
       state: "",
       country: "",
       city: "",
       street: "",
-      houseNumber: 0,
-      zip: 0,
+      houseNumber: 1, // Start with positive number to avoid Joi errors
+      zip: 1,
     },
     isBusiness: false,
   };
@@ -37,14 +40,17 @@ function SignUp() {
     formState: { errors, isValid },
   } = useForm({
     defaultValues: initialFormData,
-    mode: "onChange",
+    mode: "all", // Use 'all' to see all errors as they occur
     resolver: joiResolver(SignUpJoiSchema),
   });
 
   const submit = async (form: SignUpFormData) => {
     try {
+      console.log("Form Data:", form); // Debugging: Log form data
+      console.log("Errors:", errors); // Debugging: Log any validation errors
+
       await axios.post(
-        "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/users/register",
+        "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/users",
         form
       );
       toast.success("Registration Successful. Please log in.");
@@ -58,10 +64,14 @@ function SignUp() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900" >
       <form
-        className="flex flex-col w-[40rem] max-w-full gap-6 p-8 m-10 rounded-xl shadow-lg bg-white dark:bg-gray-800"
+      
+        className="flex flex-col w-2/5 gap-4 p-4 m-auto mt-14 mb-10 rounded-lg shadow-lg bg-white p-12
+        bg-white shadow-[0_0_30px_10px_rgba(249,168,212,0.3)] max-w-4xl w-full bg-gray-200 dark:bg-gray-800 text-black dark:text-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105 dark:shadow-[0_0_40px_20px_rgba(167,243,208,0.8)]"
         onSubmit={handleSubmit(submit)}
-  
       >
+
+
+        
         <h1 className="text-3xl font-extrabold tracking-wide mb-6 animate-fade-in-down dark:text-green-300">
           Sign Up
         </h1>
@@ -90,10 +100,26 @@ function SignUp() {
 
         <FloatingLabel
           variant="outlined"
-          type="tel"
+          type="text"
           label="Phone"
           {...register("phone")}
           color={errors.phone ? "error" : "success"}
+        />
+        {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+
+        <FloatingLabel
+          variant="outlined"
+          type="text"
+          label="Image URL"
+          {...register("image.url")}
+          color={errors.image?.url ? "error" : "success"}
+        />
+        <FloatingLabel
+          variant="outlined"
+          type="text"
+          label="Image Alt Text"
+          {...register("image.alt")}
+          color={errors.image?.alt ? "error" : "success"}
         />
 
         <FloatingLabel
@@ -101,15 +127,20 @@ function SignUp() {
           type="email"
           label="Email"
           {...register("email")}
+          className="bg-transparent dark:bg-black text-white"
           color={errors.email ? "error" : "success"}
         />
 
         <FloatingLabel
           variant="outlined"
           type="password"
+  
           label="Password"
+          
           {...register("password")}
+          className="bg-transparent dark:bg-black text-white"
           color={errors.password ? "error" : "success"}
+          
         />
 
         <div className="grid grid-cols-2 gap-4">
@@ -165,7 +196,7 @@ function SignUp() {
         </label>
 
         <Button
-          className="w-full bg-gradient-to-r from-green-400 to-blue-500 py-3 text-white font-semibold rounded-lg shadow-md transition duration-300 hover:from-green-500 hover:to-blue-600 disabled:opacity-50"
+          className="w-full bg-gradient-to-r from-green-300 to-blue-500 py-3 text-white font-semibold rounded-lg shadow-md transition duration-300 hover:from-green-300 hover:to-blue-600 disabled:opacity-50"
           type="submit"
           disabled={!isValid}
         >

@@ -1,54 +1,87 @@
 import { useSelector } from "react-redux";
 import { TRootState } from "../../Store/BigPie";
 import { Link } from "react-router-dom";
-import videoFile from "../../Media/video.mp4"; // Import the video
+import { useEffect } from "react";
 
 const TitleSection = () => {
   const user = useSelector((state: TRootState) => state.UserSlice.user);
 
+  useEffect(() => {
+    
+  }, []);
+
   return (
-    <section className="relative flex items-center justify-center w-full min-h-[50vh] overflow-hidden">
-      {/* Video Background */}
-      <video
-        autoPlay
-        loop
-        muted
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+    <section
+      style={{
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        minHeight: "50vh",
+        overflow: "hidden",
+        backgroundColor: "#333",
+      }}
+    >
+      {/* Overlay */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background:
+            "linear-gradient(to right, green, blue)",
+          opacity: 0.8,
+          zIndex: 1,
+        }}
+      ></div>
+
+      {/* Content */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          textAlign: "center",
+          color: "white",
+          padding: "20px",
+        }}
       >
-        <source src={videoFile} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-
-      {/* Gradient Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-red-600 to-blue-500 dark:from-green-700 dark:to-teal-600 opacity-80 z-10"></div>
-
-      {/* Content Section */}
-      <div className="relative z-20 flex flex-col items-center text-white text-center p-10">
-        <h1 className="text-5xl font-extrabold tracking-wide mb-4 animate-fade-in-down dark:text-green-300">
-          What The Card
+        <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "10px" }}>
+          idan david
         </h1>
-        <p className="text-2xl font-light mb-6 animate-fade-in-up">
-          All the cards in one home
+        <p style={{ fontSize: "1.5rem", marginBottom: "20px" }}>
+          All the cards
         </p>
-        <div className="h-1 w-24 bg-white rounded-full mt-4 animate-grow"></div>
+
+        <div style={{ height: "4px", width: "100px", backgroundColor: "white", margin: "10px auto" }}></div>
 
         {!user && (
-          <div className="flex space-x-4 m-10">
+          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
             <Link to="/signin">
-              <button
-                className="relative border-4 border-white text-white font-semibold py-2 px-4 rounded-lg shadow-md transition ease-in-out duration-300 focus:outline-none focus:ring-2 focus:ring-white-300 bg-transparent"
-              >
-                Sign In
+              <button style={buttonStyle}>Sign In</button>
+            </Link>
+            <Link to="/signup">
+              <button style={{ ...buttonStyle, backgroundColor: "white", color: "black" }}>
+                Sign Up
               </button>
             </Link>
-            <button className="relative bg-white hover:bg-gray-100 text-gray-500 font-semibold py-2 px-4 rounded-lg shadow-md transition ease-in-out duration-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
-              Sign Up
-            </button>
           </div>
         )}
       </div>
     </section>
   );
+};
+
+const buttonStyle = {
+  padding: "10px 20px",
+  border: "2px solid white",
+  backgroundColor: "transparent",
+  color: "white",
+  cursor: "pointer",
+  borderRadius: "5px",
+  transition: "all 0.3s ease",
 };
 
 export default TitleSection;

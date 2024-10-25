@@ -13,7 +13,7 @@ const CardEdit = () => {
   const getData = async () => {
     try {
       const res = await axios.get(
-        "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/cards/" + id,
+        `https://monkfish-app-z9uza.ondigitalocean.app/bcard2/cards/${id}`
       );
       setCard(res.data);
     } catch (error) {
@@ -25,14 +25,12 @@ const CardEdit = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setCard((prevCard) => prevCard ? { ...prevCard, [name]: value } : null);
+    setCard((prevCard) => (prevCard ? { ...prevCard, [name]: value } : null));
   };
 
-  
   const handleSave = async () => {
     if (!card) return;
-  
-    // Only include the fields you want to update
+
     const finalSanitizedCard = {
       image: {
         url: card.image.url,
@@ -53,22 +51,22 @@ const CardEdit = () => {
         zip: card.address.zip,
       },
     };
-  
+
     try {
       await axios.put(
-        "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/cards/" + id,
+        `https://monkfish-app-z9uza.ondigitalocean.app/bcard2/cards/${id}`,
         finalSanitizedCard
       );
       toast.success("Card updated successfully");
-      nav("/card/" + id); // Redirect to card details after saving
+      nav(`/card/${id}`);
     } catch (error) {
       console.error("Error saving card", error);
       toast.error("Failed to save the card");
     }
   };
-  
+
   const handleCancel = () => {
-    nav("/card/" + id); // Navigate back to card details without saving
+    nav(`/card/${id}`);
   };
 
   useEffect(() => {
@@ -76,152 +74,121 @@ const CardEdit = () => {
   }, [id]);
 
   if (loading) {
-    return <p className="text-gray-600 dark:text-white">Loading card details...</p>;
+    return <p>Loading card details...</p>;
   }
 
   if (!card) {
-    return <p className="text-gray-600 dark:text-white">Card not found</p>;
+    return <p>Card not found</p>;
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-black py-10">
-      <div className="shadow-[0_0_30px_10px_rgba(249,168,212,0.3)] max-w-4xl w-full bg-gray-200 dark:bg-gray-800 text-black dark:text-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 ease-in-out hover:scale-105 dark:shadow-[0_0_40px_20px_rgba(167,243,208,0.8)]">
-        {/* Card Edit Form */}
-        <div className="p-6">
-          {/* Card Image */}
-          <div className="mb-6 flex items-center space-x-4">
-            <div className="w-32 h-32">
-              <img
-                src={card.image.url}
-                alt={card.image.alt}
-                className="object-cover w-full h-full rounded"
-              />
-            </div>
-            <div className="flex-grow">
-              <label className="block font-semibold">Image URL:</label>
-              <input
-                type="text"
-                name="image.url"
-                value={card.image.url}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-          </div>
+    <div style={{ padding: "20px" }}>
+      <div style={{ margin: "20px", border: "1px solid #ccc", padding: "10px" }}>
+        <div>
+          <label>Image URL:</label>
+          <input
+            type="text"
+            name="image.url"
+            value={card.image.url}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-          {/* Card Title */}
-          <div className="mb-6">
-            <label className="block font-semibold">Title:</label>
-            <input
-              type="text"
-              name="title"
-              value={card.title}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+        <div>
+          <label>Title:</label>
+          <input
+            type="text"
+            name="title"
+            value={card.title}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-          {/* Card Subtitle */}
-          <div className="mb-6">
-            <label className="block font-semibold">Subtitle:</label>
-            <input
-              type="text"
-              name="subtitle"
-              value={card.subtitle}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+        <div>
+          <label>Subtitle:</label>
+          <input
+            type="text"
+            name="subtitle"
+            value={card.subtitle}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-          {/* Card Description */}
-          <div className="mb-6">
-            <label className="block font-semibold">Description:</label>
-            <textarea
-              name="description"
-              value={card.description}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+        <div>
+          <label>Description:</label>
+          <textarea
+            name="description"
+            value={card.description}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-          {/* Contact Information */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Phone */}
-            <div>
-              <label className="block font-semibold">Phone:</label>
-              <input
-                type="text"
-                name="phone"
-                value={card.phone}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
+        <div>
+          <label>Phone:</label>
+          <input
+            type="text"
+            name="phone"
+            value={card.phone}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-            {/* Email */}
-            <div>
-              <label className="block font-semibold">Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={card.email}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
+        <div>
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={card.email}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-            {/* Website */}
-            <div>
-              <label className="block font-semibold">Website:</label>
-              <input
-                type="text"
-                name="web"
-                value={card.web}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
+        <div>
+          <label>Website:</label>
+          <input
+            type="text"
+            name="web"
+            value={card.web}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-            {/* Address */}
-            <div>
-              <label className="block font-semibold">Address:</label>
-              <input
-                type="text"
-                name="address"
-                value={`${card.address.houseNumber} ${card.address.street}, ${card.address.city}, ${card.address.state}, ${card.address.country}`}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
-          </div>
+        <div>
+          <label>Address:</label>
+          <input
+            type="text"
+            name="address"
+            value={`${card.address.houseNumber} ${card.address.street}, ${card.address.city}, ${card.address.state}, ${card.address.country}`}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-          {/* Business Number */}
-          <div className="mb-6">
-            <label className="block font-semibold">Business Number:</label>
-            <input
-              type="text"
-              name="bizNumber"
-              value={card.bizNumber}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
+        <div>
+          <label>Business Number:</label>
+          <input
+            type="text"
+            name="bizNumber"
+            value={card.bizNumber}
+            onChange={handleChange}
+            style={{ width: "100%", marginBottom: "10px" }}
+          />
+        </div>
 
-          {/* Save and Cancel Buttons */}
-          <div className="flex justify-end space-x-4">
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-            >
-              Save
-            </button>
-            <button
-              onClick={handleCancel}
-              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-            >
-              Cancel
-            </button>
-          </div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <button onClick={handleSave} style={{ padding: "10px 20px", cursor: "pointer" }}>
+            Save
+          </button>
+          <button onClick={handleCancel} style={{ padding: "10px 20px", cursor: "pointer" }}>
+            Cancel
+          </button>
         </div>
       </div>
     </div>

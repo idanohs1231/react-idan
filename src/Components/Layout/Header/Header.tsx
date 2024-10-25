@@ -1,16 +1,26 @@
 /* eslint-disable tailwindcss/classnames-order */
-import { DarkThemeToggle, Navbar, TextInput } from "flowbite-react";
+import {
+  DarkThemeToggle,
+  Navbar,
+  TextInput,
+  Avatar,
+  Dropdown,
+} from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { TRootState } from "../../../Store/BigPie";
 import { userActions } from "../../../Store/UserSlice";
 import { CiSearch } from "react-icons/ci";
 import { searchActions } from "../../../Store/SearchSlice";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const user = useSelector((state: TRootState) => state.UserSlice.user);
   const dispatch = useDispatch();
   const nav = useNavigate();
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const logout = () => {
     dispatch(userActions.logout());
@@ -22,88 +32,133 @@ const Header = () => {
     dispatch(searchActions.searchWord(value));
   };
 
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Smooth animation duration
+      easing: "ease-in-out", // Smooth easing
+      once: false, // Ensure it animates every time it's opened
+    });
+  }, []);
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
   return (
-    <Navbar fluid rounded className="bg-white-800 dark:black-500 ">
-      <Navbar.Brand as={Link} href="https://flowbite-react.com">
-        <span className="self-center text-xl font-semibold text-black whitespace-nowrap dark:text-green-500">
-          What The Card
+    <Navbar
+      fluid
+      rounded
+      className="transition-all duration-300 bg-white dark:bg-black"
+    >
+      {/* Brand */}
+      <Navbar.Brand as={Link} to="/">
+        <span className="self-center text-xl font-extrabold text-black whitespace-nowrap dark:text-green-300">
+          Idan david
         </span>
       </Navbar.Brand>
+
       <Navbar.Toggle />
+
+      {/* Main Links */}
       <Navbar.Collapse>
-        <Navbar.Brand className="gap-9 max-md:flex max-md:flex-col text-black dark:text-green-500">
-          <Navbar.Link 
-            as={Link} 
-            to={"/"} 
-            href="/" 
-            className="text-black">
-            Home
-          </Navbar.Link>
-          {!user && (
-            <>
-              <Navbar.Link
+        <Navbar.Link
+          as={Link}
+          to="/"
+          className="text-black transition-transform duration-300 hover:scale-105 hover:text-green-300"
+        >
+          Home
+        </Navbar.Link>
+
+        <Navbar.Link
+          as={Link}
+          to="/about"
+          className="text-black transition-transform duration-300 hover:scale-105 hover:text-green-300"
+        >
+          About
+        </Navbar.Link>
+
+        {!user && (
+          <>
+            <Navbar.Link
               as={Link}
-              to={"/signin"}
-              href="/signin"
-              className="text-black">
+              to="/signin"
+              className="text-black transition-transform duration-300 hover:scale-105 hover:text-green-300"
+            >
               Sign In
             </Navbar.Link>
             <Navbar.Link
               as={Link}
-              to={"/signup"}
-              href="/signup"
-              className="text-black">
+              to="/signup"
+              className="text-black transition-transform duration-300 hover:scale-105 hover:text-green-300"
+            >
               Sign Up
             </Navbar.Link>
-            </>
-          )}
-          {user && (
-            <Navbar.Link 
-            className="text-black cursor-pointer" 
-            onClick={logout}>
-              Sign Out
-            </Navbar.Link>
-          )}
+          </>
+        )}
+        {user && (
+          <Navbar.Link
+            as={Link}
+            to="/profile"
+            className="text-black transition-transform duration-300 hover:scale-105 hover:text-green-300"
+          >
+            Profile
+          </Navbar.Link>
+        )}
+              </Navbar.Collapse>
 
-          {user?.isBusiness && (
-            <>
-            <Navbar.Link
-              as={Link}
-              to={"/mycards"}
-              href="/mycards"
-              className="text-black">
-              My-Cards
-            </Navbar.Link>
-            <Navbar.Link
-              as={Link}
-              to={"/createcard"}
-              href="/createcard"
-              className="text-black">
-              Create Card
-            </Navbar.Link>
-            </>
-          )}
-          {user && (
-            <>
-              <Navbar.Link
-                as={Link}
-                to={"/profile"}
-                href="/profile"
-                className="text-black">
-                Profile
-              </Navbar.Link>
-              <Navbar.Link
-                as={Link}
-                to={"/favorites"}
-                href="/favorites"
-                className="text-black">
-                Favorites
-              </Navbar.Link>
-            </>
-          )}
-        </Navbar.Brand>
-      </Navbar.Collapse>
+      {/* Search Input */}
       <TextInput rightIcon={CiSearch} onChange={search} />
+
+      {/* User Dropdown with Avatar */}
+      {user && (
+        <div onClick={toggleDropdown}>
+          <Dropdown
+            arrowIcon={false}
+            inline
+            placement="bottom-end"
+            className={`z-50 awful-dropdown ${
+              isDropdownOpen ? "aos-animate" : ""
+            }`}
+            label={
+              <div className="flex items-center gap-2 cursor-pointer">
+                <Avatar
+                  img={user.image.url}
+                  alt={user.image.alt || "User Avatar"}
+                  rounded
+                />
+                <span className="font-medium text-black dark:text-green-300">
+                  {user.name.first} {user.name.last}
+                </span>
+              </div>
+            }
+          >
+            <Dropdown.Header>
+
+            </Dropdown.Header>
+            <Dropdown.Item as={Link} to="/favorites">
+              Favorites
+            </Dropdown.Item>
+            <Dropdown.Item as={Link} to="/profile">
+              Profile
+            </Dropdown.Item>
+            <Dropdown.Item as={Link} to="/createcard">
+              Create Card
+            </Dropdown.Item>
+            <Dropdown.Item as={Link} to="/mycards">
+              My Cards
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={logout}
+              className=""
+            >
+              Log Out
+            </Dropdown.Item>
+
+          </Dropdown>
+        </div>
+      )}
+
+      {/* Dark Mode Toggle */}
       <DarkThemeToggle className="gap-3 max-md:flex max-md:flex-col max-md:items-center" />
     </Navbar>
   );

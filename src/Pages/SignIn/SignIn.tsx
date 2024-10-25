@@ -1,6 +1,5 @@
 /* eslint-disable tailwindcss/classnames-order */
 import { joiResolver } from "@hookform/resolvers/joi";
-import { Button, FloatingLabel } from "flowbite-react";
 import { useForm } from "react-hook-form";
 import { SignInJoiSchema } from "../../validations/SigninSchema.joi";
 import axios from "axios";
@@ -33,57 +32,70 @@ function SignIn() {
     try {
       const token = await axios.post(
         "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/users/login",
-        form,
+        form
       );
 
       localStorage.setItem("token", token.data);
       const id = decode(token.data)._id;
       axios.defaults.headers.common["x-auth-token"] = token.data;
       const user = await axios.get(
-        "https://monkfish-app-z9uza.ondigitalocean.app/bcard2/users/" + id,
+        `https://monkfish-app-z9uza.ondigitalocean.app/bcard2/users/${id}`
       );
       dispatch(userActions.login(user.data));
       toast.success("Sign In Successful");
       nav("/");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Sign In Failed");
     }
   };
 
   return (
-    <div className="">
-    <form
-    
-      className=" flex flex-col w-2/5 gap-4 p-4 m-auto mt-20 rounded-lg shadow-lg"
-      onSubmit={handleSubmit(submit)}
-      
-    >
-      <h1 className="text-2xl font-extrabold tracking-wide mb-4 animate-fade-in-down dark:text-green-300">Sign In</h1>
-      <FloatingLabel
-        type="email"
-        variant="outlined"
-        label="Email"
-        {...register("email")}
-        color={errors["email"] ? "error" : "success"}
-      />
-      <span className="text-sm text-red-500">{errors["email"]?.message}</span>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form
+        className="flex flex-col gap-4 w-full max-w-md p-6 bg-white shadow-md rounded-md"
+        onSubmit={handleSubmit(submit)}
+      >
+        <h1 className="text-2xl font-bold text-center mb-4">Sign In</h1>
 
-      <FloatingLabel
-        type="password"
-        variant="outlined"
-        label="Password"
-        {...register("password")}
-        color={errors["password"] ? "error" : "success"}
-      />
-      <span className="text-sm text-red-500">
-        {errors["password"]?.message}
-      </span>
+        <div className="flex flex-col">
+          <label htmlFor="email" className="mb-1">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            {...register("email")}
+            className="p-2 border rounded-md"
+          />
+          <span className="text-red-500 text-sm mt-1">
+            {errors.email?.message}
+          </span>
+        </div>
 
-      <Button className="bg-pink-300 bg-gradient-to-r from-red-600 to-blue-500 dark:bg-gradient-to-r from-green-300 to-blue-500-600 py-3" type="submit" disabled={!isValid}>
-        Sign In
-      </Button>
-    </form>
+        <div className="flex flex-col">
+          <label htmlFor="password" className="mb-1">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            {...register("password")}
+            className="p-2 border rounded-md"
+          />
+          <span className="text-red-500 text-sm mt-1">
+            {errors.password?.message}
+          </span>
+        </div>
+
+        <button
+          type="submit"
+          disabled={!isValid}
+          className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+        >
+          Sign In
+        </button>
+      </form>
     </div>
   );
 }
